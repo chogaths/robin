@@ -1,0 +1,26 @@
+git pull
+
+cd server
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=`pwd`
+echo "build src"
+go install -v svc/oprsvc
+
+echo "reset output dir"
+cd ..
+OutDir=`pwd`/../td2opr_pub
+rm -rf $OutDir
+mkdir $OutDir
+# mkdir -p $OutDir/bin
+# mkdir -p $OutDir/cfg
+# mkdir -p $OutDir/page
+
+echo "copy program"
+mv server/bin $OutDir/bin
+cp -rf server/src/svc/cfg $OutDir/cfg
+cp -rf server/src/svc/page $OutDir/page
+
+cp server/src/build/svc $OutDir/svc
+cd $OutDir/..
+zip -r -q td2opr.zip td2opr_pub
+echo "done"

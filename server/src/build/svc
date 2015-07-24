@@ -1,0 +1,33 @@
+Start()
+{
+	cd bin
+	nohup ./oprsvc > logger.txt 2>&1 &
+}
+
+Status()
+{
+	ps aux | grep oprsvc
+}
+
+Stop()
+{
+	killall oprsvc
+}
+
+case "$1" in 
+	start)
+	Start
+	Status
+	;;
+	status)
+	Status
+	;;
+	stop)
+	Stop
+	;;
+	*)
+		echo "usage: $0 {start|status|stop}"
+		exit 1
+esac
+
+exit $?

@@ -1,0 +1,159 @@
+package coredef;
+
+// svctype := acceptor或connector在IPeer上返回的类型
+// peerindex := SvcIndex启动参数( 对acceptor ) | RunConnector的SvcIndex参数( 对 connector )
+// svcid :=  svctype '|' svcname + '#' + peerindex
+// e.g.   acceptor|game<-client#1
+
+
+//===================================================
+// 网络通用
+//===================================================
+
+message ChannelDefine
+{
+	optional string Name = 1;
+	optional string Address = 2;			// 供实际侦听, 内部连接用
+	optional string NotifyAddress = 3;		// 只记录无实际作用, 供逻辑提取配置, 为了处理多网卡环境, 没有端口偏移	
+}
+
+// Channel实例化后的参数
+message PeerDefine
+{
+	optional string Name = 1;								// ChannelDefine中的Name 在这里被实例化
+	optional bool ManualStart = 2;							// 手动启动? 否则为自动连接	
+	optional string Type = 3;
+	optional string Implementor = 4[default = "binarynet"]; // Peer创建器, 默认使用二进制协议
+	repeated string Component = 5;							// 需要加载的组件
+	optional bool CapturePanic = 6;							// 捕获panic, 防止服务崩溃
+	
+	optional int32 SocketRecvTimeoutMS = 7;					// 接收超时
+	optional int32 SocketSendTimeoutMS = 8;					// 发送超时
+	
+	
+	optional string Address = 9;							// 由配置拷贝自Channel或者自行生产
+	optional string NotifyAddress = 10;						// 由配置拷贝自Channel或者自行生产
+	
+	
+	// Acceptor
+	optional int32 SessionHeartBeatMS = 51;					// Session的心跳间隔(毫秒), 心跳只会出现在Acceptor
+	
+	// Connector
+	optional bool AutoReconnect = 81;						// 断线重连
+	optional int32 FailedWaitSec = 82[ default = 2 ];		// 连接失败后等待秒数
+	optional int32 PeerIndex = 83[ default = 1 ];			// 端的索引号
+	optional int32 PeerCount = 84[ default = 1 ];			// 连接端数量, >0时 PeerIndex不再作用, 底层自动分配
+	
+	// HttpAcceptor
+	optional string TemplateDir = 121;						// 网页模板文件夹
+	optional string StaticFileDir = 122;					// 静态文件服务文件夹
+}
+
+// DB参数
+message DBDefine
+{
+	optional string DSN = 1; 					// username:password@tcp(address:port)/dbname
+	optional bool Enable = 2;					// 是否启用DB连接
+	optional int32 GroupID = 3; 				// AutoID 生成时需要的分组
+	optional bool ShowOperate = 4;				// 日志开关
+	optional int32 ConnCount = 5[default = 1]; 	// 默认连接数
+}
+
+message DebugRouteDefine
+{
+	optional bool Enable = 1;				// 总开关
+	repeated string BlockChannelName = 2;	// 需要屏蔽显示的频道
+	repeated string BlockMsgName = 3;		// 需要屏蔽的消息
+}
+
+
+// GM工具参数
+message OperateAccount
+{
+	optional string Account = 1;
+	optional string Password = 2;
+}
+message OperateDB
+{
+	optional string Name = 1;
+	optional string Addr = 2;
+	optional string ShowName = 3;
+}
+message OperateConfig
+{
+	repeated OperateDB DB = 1;
+	repeated OperateAccount Account = 2;
+}
+
+// 性能跟踪
+message ProfDefine
+{
+	optional bool CPU = 1;					// CPU性能跟踪
+	optional bool Mem = 2;					// 内存性能跟踪
+	optional bool Block = 3;				// 块性能跟踪
+}
+
+// 服务配置
+message ServiceConfig
+{
+	repeated ChannelDefine Channel = 1;			// 全局配置
+	
+	repeated PeerDefine Peer = 2;				// 配置实例化	
+	
+	optional DBDefine DB = 3;					// DB参数
+	
+	optional DebugRouteDefine DebugRoute = 4;	// 调试消息流向	
+	
+	optional LogDefine Log = 5;
+	
+	optional ProfDefine Prof = 7;			// 性能跟踪
+}
+
+message LogDefine
+{
+	optional string FileName = 1;
+	optional bool Enable = 2;
+}
+
+//////////////////////////////////////////
+// rpc 组件 服务器组间通信
+//////////////////////////////////////////
+
+message RemoteCallREQ
+{
+	enum MsgID{ ID = 0; }
+	                 
+	required bytes UserMsg = 1;
+	required uint32 UserMsgID = 2;	
+	required int64 CallID = 3;
+}
+
+message RemoteCallACK
+{
+	enum MsgID{ ID = 0; }
+	                 
+	required bytes UserMsg = 1;
+	required uint32 UserMsgID = 2;
+	required int64 CallID = 3;
+}
+
+// 测试用消息
+message RPCEchoACK
+{
+	enum MsgID{ ID = 0; }
+	                 
+	required string Content = 1;
+}
+
+//////////////////////////////////////////
+// relay 组件 服务器转发消息
+//////////////////////////////////////////
+message RelayMessageACK
+{
+	enum MsgID{ ID = 0; }
+	                 
+	required bytes UserMsg = 1;
+	required uint32 UserMsgID = 2;	
+	required int64 SessionID = 3;
+	optional bool BroardCast = 4;
+}

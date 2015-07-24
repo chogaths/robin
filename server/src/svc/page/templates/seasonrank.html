@@ -1,0 +1,15 @@
+<script src="/common/jquery.js"></script>
+<script src="/common/opr.js"></script>
+<script src="/seasonrank.js"></script>
+
+<body>
+	选择区服：
+	<select id=select>
+		{{range .}}
+			<option value={{.Name}}>{{.ShowName}}</option>
+		{{end}}
+	</select>
+	<button id=commit>确定</button><hr>
+	<h4 id="info"></h4></p>
+	<table id=rank></table>
+</body>
