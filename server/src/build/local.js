@@ -2,7 +2,7 @@
 DB.ConnCount=10
 DebugRoute.Enable = true
 
-var ExternIP = "192.168.1.62"
+var ExternIP = "45.78.4.110"
 ReplacePeerIP("opr<-web", ExternIP )
 
 

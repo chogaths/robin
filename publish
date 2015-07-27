@@ -21,7 +21,7 @@ cp -rf server/src/svc/cfg $OutDir/cfg
 cp -rf server/src/svc/page $OutDir/page
 
 cp server/src/build/svc $OutDir/svc
-cp server/src/build/localjs $OutDir/cfg/local.js
+cp server/src/build/local.js $OutDir/cfg/local.js
 cd $OutDir/..
 zip -r -q robin.zip robin_pub
 echo "done"
