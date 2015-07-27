@@ -1,17 +1,17 @@
 Start()
 {
 	cd bin
-	nohup ./oprsvc > logger.txt 2>&1 &
+	nohup ./robin > logger.txt 2>&1 &
 }
 
 Status()
 {
-	ps aux | grep oprsvc
+	ps aux | grep robin
 }
 
 Stop()
 {
-	killall oprsvc
+	killall robin
 }
 
 case "$1" in 

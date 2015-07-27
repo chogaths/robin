@@ -4,11 +4,11 @@ cd server
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=`pwd`
 echo "build src"
-go install -v svc/oprsvc
+go install -v svc/robin
 
 echo "reset output dir"
 cd ..
-OutDir=`pwd`/../td2opr_pub
+OutDir=`pwd`/../robin_pub
 rm -rf $OutDir
 mkdir $OutDir
 # mkdir -p $OutDir/bin
@@ -22,5 +22,5 @@ cp -rf server/src/svc/page $OutDir/page
 
 cp server/src/build/svc $OutDir/svc
 cd $OutDir/..
-zip -r -q td2opr.zip td2opr_pub
+zip -r -q robin.zip robin_pub
 echo "done"
